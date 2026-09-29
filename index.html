@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fashion House - Bài 2</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="slider" id="slider"></div>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">Fashion House</div>
+    <div class="tools">
+      <button onclick="share()">Chia sẻ</button>
+      <a href="#">Đăng nhập</a>
+      <a href="#">Đăng ký</a>
+      <a href="#">🛒 Giỏ hàng</a>
+      <input id="q" placeholder="Tìm kiếm..." oninput="render()">
+    </div>
+  </div>
+
+  <!-- Menu ngang: các loại hàng không phân biệt sản phẩm cụ thể -->
+  <div class="hmenu">
+    <a href="#">Danh mục sản phẩm</a>
+    <button id="t-all" class="on" onclick="setTab('all')">Tất cả sản phẩm</button>
+    <button id="t-new" onclick="setTab('new')">Hàng mới về</button>
+    <button id="t-sale" onclick="setTab('sale')">Khuyến mãi</button>
+  </div>
+
+  <a class="btn-form" href="form.html" style="margin-top:12px">＋ Quản lý sản phẩm (Form Bài 1)</a>
+
+  <div class="main">
+    <!-- Menu dọc: 6 loại sản phẩm cụ thể -->
+    <aside class="vmenu">
+      <h3>Danh mục các loại hàng</h3>
+      <button class="on" onclick="setCat(-1,this)">Tất cả</button>
+      <button onclick="setCat(0,this)">Áo</button>
+      <button onclick="setCat(1,this)">Quần</button>
+      <button onclick="setCat(2,this)">Váy</button>
+      <button onclick="setCat(3,this)">Áo khoác</button>
+      <button onclick="setCat(4,this)">Túi</button>
+      <button onclick="setCat(5,this)">Phụ kiện</button>
+    </aside>
+    <section>
+      <div class="grid" id="grid"></div>
+    </section>
+  </div>
+
+  <div class="foot">
+    <div><b>Thông tin liên hệ đặt hàng:</b><br>☎ 0987 654 321 · ✉ fashionhouse@example.com</div>
+    <div><b>Lượt truy cập khách hàng:</b><br>👥 <span id="visits">0</span> lượt truy cập</div>
+  </div>
+</div>
+
+<script>
+// 18 sản phẩm, mỗi 3 sản phẩm thuộc 1 trong 6 loại
+const names=["Áo thun basic","Áo sơ mi trắng","Áo polo","Quần jeans ống rộng","Quần kaki","Quần short","Váy chữ A","Váy midi","Váy hoa nhí","Áo khoác denim","Áo khoác bomber","Hoodie basic","Túi tote canvas","Balo mini","Túi đeo chéo","Mũ lưỡi trai","Thắt lưng da","Kính râm"];
+const icons=["👕","👖","👗","🧥","👜","🕶️"];
+const P=names.map((n,i)=>({id:i+1,name:n,cat:Math.floor(i/3),price:(150+i*23)*1000,
+  isNew:i>=12,            // 6 sản phẩm: Hàng mới về
+  sale:i%2===0}));        // 9 sản phẩm: Khuyến mãi
+let tab='all',cat=-1;
+
+function setTab(t){tab=t;cat=-1;
+  document.querySelectorAll('.vmenu button').forEach((b,i)=>b.classList.toggle('on',i===0));
+  ['all','new','sale'].forEach(x=>document.getElementById('t-'+x).classList.toggle('on',x===t));
+  render();}
+function setCat(c,el){cat=c;
+  document.querySelectorAll('.vmenu button').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');render();}
+
+function render(){
+  const kw=document.getElementById('q').value.toLowerCase();
+  let list=P.filter(p=>tab==='all'||(tab==='new'&&p.isNew)||(tab==='sale'&&p.sale));
+  if(cat>=0)list=list.filter(p=>p.cat===cat);
+  if(kw)list=list.filter(p=>p.name.toLowerCase().includes(kw));
+  document.getElementById('grid').innerHTML=list.map(p=>{
+    const price=(tab==='sale'||p.sale&&tab==='sale')?Math.round(p.price*0.8):p.price;
+    const link=p.id===1?`<a href="product.html">Xem chi tiết</a>`:'';   // chỉ sản phẩm đầu tiên có trang chi tiết
+    return `<div class="card"><div class="em">${icons[p.cat]}</div><b>${p.name}</b>
+      <span>${price.toLocaleString('vi-VN')}đ${tab==='sale'?' (-20%)':''}</span>${link}</div>`}).join('')
+    ||'<p>Không tìm thấy sản phẩm.</p>';
+}
+
+// Slider ảnh động khuyến mãi
+const ads=[["✨ SALE 20% TOÀN BỘ ÁO KHOÁC ✨","#4472c4"],["🚚 FREESHIP ĐƠN TỪ 499.000đ","#6366f1"],["🆕 HÀNG MỚI VỀ TUẦN NÀY","#0e7490"]];
+let k=0;const s=document.getElementById('slider');
+function slide(){s.textContent=ads[k][0];s.style.background=ads[k][1];k=(k+1)%ads.length}
+slide();setInterval(slide,2500);
+
+// Bộ đếm lượt truy cập (lưu trong trình duyệt)
+let v=+(localStorage.getItem('visits')||0)+1;localStorage.setItem('visits',v);
+document.getElementById('visits').textContent=v;
+
+function share(){const u=location.href;
+  if(navigator.share)navigator.share({title:document.title,url:u});
+  else navigator.clipboard.writeText(u).then(()=>alert('Đã sao chép liên kết!'));}
+render();
+</script>
+</body>
+</html>

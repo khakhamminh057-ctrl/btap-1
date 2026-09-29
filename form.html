@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý thông tin sản phẩm</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <form class="form" id="f" onsubmit="save(event)">
+    <h1>Quản lý thông tin sản phẩm</h1>
+
+    <label for="ma">Mã hàng *</label>
+    <input id="ma" required placeholder="VD: AT001">
+
+    <label for="ten">Tên hàng *</label>
+    <input id="ten" required placeholder="VD: Áo thun basic">
+
+    <label for="hang">Hãng sản xuất</label>
+    <input id="hang" placeholder="VD: Fashion House">
+
+    <label for="xx">Xuất xứ</label>
+    <select id="xx">
+      <option>Việt Nam</option><option>Trung Quốc</option><option>Hàn Quốc</option><option>Nhật Bản</option><option>Khác</option>
+    </select>
+
+    <label for="mota">Mô tả chi tiết sản phẩm</label>
+    <textarea id="mota" placeholder="Chất liệu, kích cỡ, màu sắc..."></textarea>
+
+    <label for="link">Hình ảnh sản phẩm</label>
+    <div class="imgrow">
+      <input id="link" placeholder="Dán link ảnh vào đây (https://...)">
+      <button type="button" class="btn" onclick="addImg()">Thêm ảnh</button>
+    </div>
+    <img id="preview" alt="Ảnh sản phẩm">
+
+    <label for="gia">Giá sản phẩm (đ)</label>
+    <input id="gia" type="number" min="0" placeholder="VD: 150000">
+    <span class="price">Giá tham khảo: 150.000đ — 2.000.000đ (tùy sản phẩm)</span>
+
+    <div class="actions">
+      <button class="btn" type="submit">Lưu</button>
+      <button class="btn" type="button" onclick="location.href='index.html'">Thoát</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </form>
+</div>
+<script>
+function addImg(){
+  const u=document.getElementById('link').value.trim(),img=document.getElementById('preview');
+  if(!u){alert('Hãy dán link ảnh trước.');return}
+  img.src=u;img.style.display='block';
+}
+function save(e){
+  e.preventDefault();
+  document.getElementById('msg').textContent='Đã lưu sản phẩm: '+document.getElementById('ten').value;
+}
+</script>
+</body>
+</html>
